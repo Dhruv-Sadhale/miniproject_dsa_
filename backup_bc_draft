@@ -1,0 +1,497 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <limits.h>
+
+typedef struct node{
+	int val;
+	struct node* next;
+	struct node* prev;
+}node;
+typedef struct list{
+	node* front;
+	node* rear;
+}list;
+
+
+void init(list* ptr){
+	ptr->front=NULL;
+	ptr->rear=NULL;
+}
+
+void insertRight(list* ptr,int val){
+	node* nn=(node*)malloc(sizeof(node));
+	if(nn){
+		nn->val=val;
+		nn->next=NULL;
+		nn->prev=NULL;
+	}
+	else
+		return;
+	if(ptr->front==NULL){
+		ptr->front=nn;
+		ptr->rear=nn;
+		return;
+	}
+	ptr->rear->next=nn;
+	nn->prev=ptr->rear;
+	ptr->rear=nn;
+	return;
+}
+void insertLeft(list* ptr, int val){
+	node* nn=(node*)malloc(sizeof(node));
+	if(nn){
+		nn->val=val;
+		nn->next=NULL;
+		nn->prev=NULL;
+	}
+	else
+		return;
+	if(ptr->front==NULL){
+		ptr->front=nn;
+		ptr->rear=nn;
+		return;
+	}
+	ptr->front->prev=nn;
+	nn->next=ptr->front;
+	ptr->front=nn;
+	return;
+}
+void displayLR(list* ptr){
+	if(ptr->front==NULL){
+		printf("Empty List\n");
+		return;
+	}
+	node* p=ptr->front;
+	while(p){
+		printf("%d",p->val);
+		p=p->next;
+	}
+	printf("\n");
+	return;
+}
+int isempty(list *ptr){
+	if (ptr->front==NULL){
+		printf("Empty List\n");
+		return 1;
+	return 0;
+}
+}
+void displayRL(list* ptr){
+	if(ptr->rear==NULL){
+		return;
+	}
+	node* p=ptr->rear;
+	while(p){
+		printf("%d",p->val);
+		p=p->prev;
+	}
+	printf("\n");
+	return;
+}
+void deleteRight(list* ptr){
+	if(isempty(ptr)){
+		return;
+	}	
+	node* p=ptr->rear;
+	ptr->rear=ptr->rear->prev;
+	if(ptr->rear!=NULL){
+		ptr->rear->next=NULL;
+	}
+	free(p);
+}
+void deleteLeft(list* ptr){
+	if(isempty(ptr)){
+		return;
+	}	
+	node* p=ptr->front;
+	ptr->front=ptr->front->next;
+	if(ptr->front!=NULL){
+		ptr->front->prev=NULL;
+	}
+	free(p);
+}
+void delete(list* ptr){
+	if(isempty(ptr)){
+		return;
+	}
+	node* p=ptr->front;
+	node* q=ptr->front;
+	while(q){
+		p=q;
+		q=q->next;
+		free(p);
+	}
+	ptr=NULL;
+	return;
+}
+void subtraction(list* ptr1, list* ptr2,list *diff){
+	int now,num;
+	int change=0, todo=0;
+	node *p1=(ptr1)->rear;
+	node *p2=(ptr2)->rear;
+	//list diff;
+	//init(&diff);
+	while(p1 && p2){
+		if(change==1 || todo==1){
+			if(p1->val!=0){
+				now=p1->val-1;
+				todo=0;
+			}
+			else{
+				now=9;
+				todo=1;
+			}
+		}
+		else{
+			now=p1->val;
+		}
+		if(now >=p2->val){
+			insertLeft(diff,now-p2->val);
+			change=0;
+		}
+		else{
+			num=10+now;
+			insertLeft(diff,num-p2->val);
+			change=1;
+		}
+		p1=p1->prev;
+		p2=p2->prev;
+	}
+	while(p1){
+		if(change==1 || todo==1){
+			if(p1->val!=0){
+				now=p1->val-1;
+				insertLeft(diff,now);
+				change=0;
+				todo=0;
+			}
+			else{
+				now=9;
+				insertLeft(diff,now);
+				todo=1;
+			}
+		}
+		else{
+			now=p1->val;
+			insertLeft(diff,now);
+			change=0;
+		}
+		p1=p1->prev;
+	}
+	while(p2){
+		int imaginary0=0;
+			if(change==1 || todo==1){
+			if(imaginary0!=0){
+				now=p1->val-1;
+				todo=0;
+			}
+			else{
+				now=9;
+				todo=1;
+			}
+		}
+		else{
+			now=imaginary0;
+		}
+		if(now >=p2->val){
+			insertLeft(diff,now-p2->val);
+			change=0;
+		}
+		else{
+			num=10+now;
+			insertLeft(diff,num-p2->val);
+			change=1;
+		}
+		
+		p2=p2->prev;
+	}
+	displayLR(diff);
+	//list* ret=&diff;
+	//return ret;
+}
+		
+		
+void addition(list* ptr1,list* ptr2,list* sum){
+	//printf("enters addition function\n");
+	int k=0;
+	int num;
+	node* p1=(ptr1)->rear;
+	node* p2=(ptr2)->rear;
+	//list sum;
+	//init(&sum);
+	while(p1 && p2){
+		
+		if(p1->val+p2->val+k >9){
+			num=(p1->val+p2->val+k)%10;	
+			insertLeft(sum,num);
+			k=1;
+		}
+		else{
+			num=p1->val+p2->val+k;
+			insertLeft(sum,num);
+			k=0;
+		}
+		p1=p1->prev;
+		p2=p2->prev;
+	}
+	while(p1){
+		num=p1->val+k;
+		if (num>9){
+			insertLeft(sum, 0);
+			k=1;
+		}
+		else{
+			insertLeft(sum,num);
+			k=0;
+		}
+		p1=p1->prev;
+	}
+	while(p2){
+		num=p2->val+k;
+		if (num>9){
+			insertLeft(sum, 0);
+			k=1;
+		}
+		else{
+			insertLeft(sum,num);
+			k=0;
+		}
+		p2=p2->prev;
+	}
+	if(k==1){
+		insertLeft(sum,1);
+	}
+	//list* ret=&sum;
+	displayLR(sum);
+	//return ret;
+
+}
+void  multiplication(list* ptr1, list* ptr2){
+//printf("enters multilication func\n");
+	node* p1=(ptr1)->front;
+	node* p2=(ptr2)->front;
+	//first we check for the bigger number
+	int len1=0;
+	int len2=0;
+	while(p1){
+		len1++;
+		p1=p1->next;
+	}
+	while(p2){
+		len2++;
+		p2=p2->next;
+	}
+	if(len1>len2){
+		p1=(ptr1)->rear;
+		p2=(ptr2)->rear;
+	}
+	else if(len2>len1){
+		p1=(ptr2)->rear;
+		p2=(ptr1)->rear;
+	}
+	else{
+		int flag=0;
+		p1=(ptr1)->front;
+		p2=(ptr2)->front;
+		while(p1 && p2){
+			if(p1->val >p2->val){
+				p1=(ptr1)->rear;
+				p2=(ptr2)->rear;
+				flag=1;
+				break;
+			}
+			else if(p1->val <p2->val){
+				p1=(ptr2)->rear;
+				p2=(ptr1)->rear;
+				flag=1;
+				break;
+			}
+			p1=p1->next;
+			p2=p2->next;
+		}
+		if (flag==0){
+			p1=(ptr1)->rear;
+			p2=(ptr2)->rear;
+		}
+	}
+	//printf("%d %d %d %d\n", len1, len2, p1->val, p2->val); //correct till here
+	//now we perform the multiplication algorithm
+	node* least=p1;
+	
+	    list mully;
+    init(&mully);
+    list *mul1 = &mully;
+    insertLeft(mul1, 0);
+    int i = 0;
+    int carry = 0;
+    int num;
+    printf("list are\n");
+    displayLR(ptr1);
+    displayLR(ptr2);
+    printf("list are\n");
+/*list this_mul2;
+    list this_mul;
+    init(&this_mul2);
+    init(&this_mul);
+    list* mul2 = &this_mul2 ;
+    list* mul = &this_mul;*/
+    int size=(len2>len1)? len1:len2;
+    list** level=(list**)malloc(sizeof(list)*size);
+    list** sum=(list**)malloc(sizeof(list)*(size+1));
+    sum[0]=(list*)malloc(sizeof(list));
+    insertLeft(sum[0],0);
+    while (p2) {
+        p1 = least;
+        carry = 0;
+        level[i]=(list*)malloc(sizeof(list));
+	sum[i+1]=(list*)malloc(sizeof(list));
+	/*if(i==0){
+		sum[0]=mul1;
+	}*/
+        while (p1) {
+            num = ((p1->val * p2->val) + carry) % 10;
+            carry = ((p1->val * p2->val) + carry) / 10;
+            insertLeft(level[i], num);
+            printf("level[%d] is,",i);
+            displayLR(level[i]);
+            p1 = p1->prev;
+        }
+
+        if (carry != 0) {
+            insertLeft(level[i], carry);
+        }
+
+        int z = i;
+        while (z >= 1) {
+            insertRight(level[i], 0);
+            z--;
+        }
+        printf("for %d,", i);
+	displayLR(level[i]);
+        addition(sum[i], level[i],sum[i+1]);
+        displayLR(sum[i+1]);
+	/*displayLR(mul);
+        // Free the previously allocated memory and reset pointers
+        free(mul1);
+        mul1 = NULL;
+        free(mul2);
+        mul2 = NULL;
+
+        mul1 = mul;
+        mul = NULL;*/
+        i++;
+        //free(sum[i-1]);
+        //free(level[i-1]);
+        p2 = p2->prev;
+    }
+
+    displayLR(sum[i]);
+    //return sum[i];
+   // printf("leaves multiplication func\n");
+   // free(level[i]);
+    //free(sum[i]);
+}
+
+/*void division(list* ptr1, list*ptr2){
+	list *quotient=(list*)malloc(sizeof(list));
+	node* p1=ptr1->front;
+	while(p1){
+		if(isgreater(p2,p1)){
+			insertRight(quotient,0);
+		}
+		else{
+			insertRight(quotient,1);
+			*/
+void calculate(list* ptr1, list* ptr2, char op,list* sum){
+	switch(op){
+		case '+': addition(ptr1,ptr2,sum);
+			 break;
+		case '-': subtraction(ptr1,ptr2,sum);
+			break;
+		case '*': multiplication(ptr1,ptr2);
+			break;
+		default: printf("invalid\n");
+			break;
+	}
+	printf("Final result is:\n");
+	//printf("leaves addition function\n");
+	
+}	
+
+		
+int main(){
+
+	int c;
+	char op;
+	list l1;
+	list l2;
+	list sum;
+	init(&sum);
+	init(&l1);
+	init(&l2);
+	//char* str=(char*)malloc(sizeof(char)*INT_MAX);
+	printf("BINARY CALCULATOR\n");
+	printf("What do you want to calculate?\n");
+	/*int i=0;
+	while((c=getchar())!='\n'){
+		str[i]=c;
+		i++;
+	}
+	str[i]='\0';
+	l2=(list*)malloc(sizeof(list));
+	init(l2);
+	insertLeft(l2,0);
+	char remember='+';
+	for(int i=0;;i++){
+		l1=(list*)malloc(sizeof(list));
+		init(l1);
+		if(isdigit(str[i])){
+			insertRight(l1,str[i]-'0');
+		}
+		else{
+			if(str[i]=='\0'){
+				sum=(list*)malloc(sizeof(list));
+			calculate(l1,l2,remember,sum);
+			remember=str[i];
+			free(l1);
+			free(l2);
+			l2=sum;
+			free(sum);
+			break;
+			}
+			else{
+			sum=(list*)malloc(sizeof(list));
+			init(sum);
+			calculate(l1,l2,remember,sum);
+			remember=str[i];
+			free(l1);
+			free(l2);
+			l2=sum;
+			sum=NULL;
+			}
+		}
+	}
+	displayLR(l2);
+	free(l2);*/
+	printf("Enter first number\n");
+	while((c=getchar())!='\n'){
+		insertRight(&l1,c-'0');
+	}
+	printf("Enter second number\n");
+	while((c=getchar())!='\n'){
+		insertRight(&l2,c-'0');
+	}
+	printf("Enter operation\n");
+	scanf(" %c",&op);
+	//displayLR(&l1);
+	//displayLR(&l2);
+	calculate(&l1,&l2,op,&sum);
+	//printf("Added number is:\n");
+	//displayLR(&sum);
+	delete(&l1);
+	delete(&l2);
+	//delete(&sum);
+	return 0;
+}
+

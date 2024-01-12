@@ -24,6 +24,18 @@ typedef struct stack{
 	sll* l;
 	sll *top;
 }stack;
+/*
+void init_stack(stack *s);
+void init_list(list *l);
+int isempty(stack s);
+void push(stack *s,int d);
+int pop(stack *s);
+int peek(stack s);
+void insert(list *l,int d);
+void deletel(list *l);
+int isemptyl(list l);
+void display(stack s);
+*/
 void init_list(sll **l){
    *l = NULL;
     return;
@@ -113,17 +125,17 @@ char pop(stack* s){
     s->top=s->l;
     return j;
 }
-void display(stack s){ 
+void display(stack s){
     if(isempty(s)){
         printf("Stack is empty");
         return;
     }
-    printf("[");
+    printf("[ ");
     sll *p=s.top;
     while(p){
+    	if(p->data!=' ')
         printf("%c",p->data);
         p=p->next;
-       
     }
     printf("]\n");
     return;
@@ -241,39 +253,28 @@ void delete(list* ptr){
 	ptr=NULL;
 	return;
 }
+/*void deleteList(list* ptr) {
+    if (!ptr) return;
+    node* current = ptr->front;
+    node* next;
+    while (current) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+    ptr->front = ptr->rear = NULL; // Reset the list pointers
+}*/
+
+/*void deleteStack(stack* s) {
+    deleteList(s->l);
+    s->top = NULL;
+}*/
 int isgreater(list* ptr1, list* ptr2){
  	node* p1=(ptr1)->front;
 	node* p2=(ptr2)->front;
 	//first we check for the bigger number
 	int len1=0;
 	int len2=0;
-	node *q1;
-	node *q2;
-	while(p1 && p1->val==0 ){
-		q1=p1;
-		ptr1->front=ptr1->front->next;
-		p1=p1->next;
-		free(q1);
-
-	}
-	if(!p1){
-	init(ptr1);
-		insertLeft(ptr1,0);
-	}
-	while(p2 && p2->val==0 ){
-	q2=p2;
-		ptr2->front=ptr2->front->next;
-		p2=p2->next;
-		free(q2);
-
-	}
-	if(!p2){
-	init(ptr2);
-		insertLeft(ptr2,0);
-	}
-	p1=(ptr1)->front;
-	p2=(ptr2)->front;
-	
 	while(p1){
 		len1++;
 		p1=p1->next;
@@ -282,7 +283,6 @@ int isgreater(list* ptr1, list* ptr2){
 		len2++;
 		p2=p2->next;
 	}
-	
 	if(len1>len2){
 		return 1;
 	}
@@ -398,22 +398,12 @@ void subtraction(list* ptr1, list* ptr2,list *diff){
 		
 		p2=p2->prev;
 	}
-	//displayLR(diff);
-	//if(diff->front
-	node *q1;
-	node* pp=diff->front;
-	while(pp && pp->val==0 ){
-		q1=pp;
-		diff->front=diff->front->next;
-		pp=pp->next;
-		free(q1);
-
-	}
-	if(!pp){
-	init(diff);
-		insertLeft(diff,0);
-	}
-}		
+	displayLR(diff);
+	//list* ret=&diff;
+	//return ret;
+}
+		
+		
 void addition(list* ptr1,list* ptr2,list* sum){
 	//printf("enters addition function\n");
 	int k=0;
@@ -518,7 +508,7 @@ void  multiplication(list* ptr1, list* ptr2,list* result){
 			p2=(ptr2)->rear;
 		}
 	}
-	//printf("%d %d %d %d\n", len1, len2, p1->val, p2->val); //correct till here
+	printf("%d %d %d %d\n", len1, len2, p1->val, p2->val); //correct till here
 	//now we perform the multiplication algorithm
 	node* least=p1;
     int i = 0;
@@ -530,14 +520,12 @@ void  multiplication(list* ptr1, list* ptr2,list* result){
     sum[0]=(list*)malloc(sizeof(list));
     init(sum[0]);
     insertLeft(sum[0],0);
-   // displayLR(sum[0]);
+    displayLR(sum[0]);
     while (p2) {
         p1 = least;
         carry = 0;
         level[i]=(list*)malloc(sizeof(list));
 	sum[i+1]=(list*)malloc(sizeof(list));
-	init(level[i]);
-	init(sum[i+1]);
         while (p1) {
             num = ((p1->val * p2->val) + carry) % 10;
             carry = ((p1->val * p2->val) + carry) / 10;
@@ -556,149 +544,38 @@ void  multiplication(list* ptr1, list* ptr2,list* result){
             insertRight(level[i], 0);
             z--;
         }
-      //  printf("for level %d: ",i);
-        //displayLR(level[i]);
+        printf("for level %d: ",i);
+        displayLR(level[i]);
         addition(sum[i], level[i],sum[i+1]);
        // free(sum[i]);
         //free(level[i]);
         i++;
         p2 = p2->prev;
     }
-    	//printf("Result of multiplication operation\n");
-    	  //  displayLR(sum[i]);
+    	printf("Result of multiplication operation\n");
+    	    displayLR(sum[i]);
 	node* transfer=sum[i]->front;
 	while(transfer){
 		insertRight(result,transfer->val);
 		transfer=transfer->next;
 	}
-	//displayLR(result);
 	//free(*sum);
 	//free(*level);
 	//free(*sum);
 
 }
 
-
-void division(list* ptr1, list*ptr2, list* quotient){
-	//printf("bp\n");
-	if(ptr2->front->val==0){
-		printf("Error, cannot divide by zero\n");
-		exit(0);
-	}
+void division(list* ptr1, list*ptr2){
+	list *quotient=(list*)malloc(sizeof(list));
 	node* p1=ptr1->front;
-	//int i=1;
-	int z=0;
-	//list* temp=NULL;
-		list* rem=NULL;
-		p1=ptr1->front;
-		list* temp=(list*)malloc(sizeof(list));
-		init(temp);
-		
 	while(p1){
-	
-		//p1=ptr1->front;
-		
-		
-		
-			insertRight(temp,p1->val);
-			p1=p1->next;
-			//printf("temp ");
-			//displayLR(temp);
-			//printf(" to check is greater %d\n", isgreater(ptr2,temp));
-			//displayLR(temp);
-		if(isgreater(ptr2,temp)==1){
+		if(isgreater(p2,p1)){
 			insertRight(quotient,0);
-			//printf("quotient: ");
-			//displayLR(quotient);
 		}
 		else{
-			int i=0;
-			list *mul;
-			list* I=(list*)malloc(sizeof(list));
-			init(I);
-			insertLeft(I,i);
-			while(i<=10){
-			mul=(list*)malloc(sizeof(list));
-			init(mul);
-			//insertLeft(mul,0);
-				
-					//deleteLeft(mul);
-					//init(mul);
-					I->front->val=i;
-					multiplication(ptr2,I,mul);
-					int yes=isgreater(mul,temp);
-				if(yes==-1){
-					
-					
-				}
-				else if(yes==0){
-					break;
-				}
-				else{
-					i=i-1;
-					break;
-				}
-				i++;
-			}
-			free(I);
-			free(mul);
-			insertRight(quotient,i);
-			//printf("quotient: ");
-			//displayLR(quotient);
-			 rem=(list*)malloc(sizeof(list));
-			init(rem);
+			insertRight(quotient,1);
+			*/
 			
-			
-			I=(list*)malloc(sizeof(list));
-			init(I);
-			insertLeft(I,i);
-			mul=(list*)malloc(sizeof(list));
-			init(mul);
-			multiplication(ptr2,I,mul);
-			//printf("mul: ");
-			//displayLR(mul);
-			subtraction(temp,mul,rem);//yet to be designed
-			free(mul);
-			free(I);
-			//printf("remainder is: ");
-			//displayLR(rem);
-			if(p1==NULL) break;
-			if(p1!=NULL){
-				free(temp);
-				temp=(list*)malloc(sizeof(list));
-				init(temp);
-				node* p=rem->front;
-				while(p){
-					insertRight(temp,p->val);
-					p=p->next;
-				}
-				free(rem);
-				
-			}
-			
-		}
-	}
-	//printf("result of division: ");
-	//displayLR(quotient);
-	
-	node *q1;
-	node* pp=quotient->front;
-	while(pp && pp->val==0 ){
-		q1=pp;
-		quotient->front=quotient->front->next;
-		pp=pp->next;
-		free(q1);
-
-	}
-	if(!pp){
-	init(quotient);
-		insertLeft(quotient,0);
-	}
-	/*if(rem!=NULL)
-	displayLR(rem);*/
-	
-}
-
 int precedence(char c){
     if(c == '+')
         return 10;
@@ -716,7 +593,6 @@ int precedence(char c){
         return 5;
     return 0;
 }
-
 void calculate(list* ptr1, list* ptr2, char op,list* result){
 	switch(op){
 		case '+': addition(ptr1,ptr2,result);
@@ -725,22 +601,18 @@ void calculate(list* ptr1, list* ptr2, char op,list* result){
 			break;
 		case '*': multiplication(ptr1,ptr2,result);
 			break;
-		case '/':division(ptr1,ptr2,result);
-				
-				
-			break;
 		default: printf("invalid\n");
 			break;
 	}
-	//printf("Final result is:\n");
+	printf("Final result is:\n");
 	
 }	
 
 	
 
-void builder(){
+ int main(){
 
-    sll* infix;
+    sll* infix;//E
     init_list(&infix);
     int entry;
     printf("Enter:\n");
@@ -756,7 +628,6 @@ void builder(){
     init_stack(&bucket);
     char c;
     append(&postfix,' ');
-   // printf("%c",infix->data);
     while(infix){
             c = infix->data;
             if(isdigit(c)){
@@ -787,208 +658,64 @@ void builder(){
                         }
                     }
             }
-                  	//printf("%c, ",postfix->data);
        infix=infix->next;
-
     }
-    
-	//display(s);
+
     while(!isempty(s)){
         append(&postfix , pop(&s));
         append(&postfix , ' ');
     }
-   // printf("hello??\n");
-    //to display postfix
-   /*sll* fornow=postfix;
-    while(fornow){
-    	printf("%c", fornow->data);
-    	fornow=fornow->next;
-    }
-    free(fornow);
-    printf("\n");*/
+    
     //now we do our final calculations
-    	list *l1;
-	list *l2;
-	list *result;
-	int l1m=0, l2m=0;
+    list l1;
+	list l2;
+	list result;
     while(postfix){
     	if(postfix->data=='+' || postfix->data=='-' ||postfix->data=='*' ||postfix->data=='/' ){
     		int space=0;
-    		    l1=(list*)malloc(sizeof(list));
-		l2=(list*)malloc(sizeof(list));
-		result=(list*)malloc(sizeof(list));
-    		init(l1);
-    		init(l2);
-    		init(result);
-    		//printf("is empty? %d\n",isempty(bucket));
-    		//printf("how many times here?\n");
+    		init(&l1);
+    		init(&l2);
+    		init(&result);
     		while(space!=3){
     			if(peek(bucket)==' '){
-    				//printf("bp1\n");
+    				
     				space++;
     				if(space==3) break;
     				pop(&bucket);
     			}
     			else{
-    				if(space==1){
-    				//printf("bp2\n");
-    					if(peek(bucket)=='m'){
-    					l2m=1;
-    					pop(&bucket);
-    					} else{
-    					 l2m=0;
-    					
-    					insertLeft(l2,pop(&bucket)-'0');
-    					//displayLR(l2);
-    					}
-    				}
-    				else if(space==2){
-					
-    					if(peek(bucket)=='m'){
-    					  //printf("peek bucket ' %c ' \n", peek(bucket));
-    					  pop(&bucket);
-    					 // printf("'%c'\n",peek(bucket));
-    					 // break;
-    					l1m=1;
-    					//printf("pop bucket '%c' ",pop(&bucket));
-    					//printf("peek buckut ' %c ' ",peek(bucket));
-    					} else {l1m=0;
-    					insertLeft(l1,pop(&bucket)-'0');
-    					//displayLR(l1);
-    					}
-    				//displayLR(l1);
-    				}
+    				if(space==1)
+    				insertLeft(&l1,pop(&bucket)-'0');
+    				else if(space==2)
+    				insertLeft(&l2,pop(&bucket)-'0');
     			}
     		}
-    			if(postfix->data=='+' && l2m==1 && l1m==1){
-    			calculate(l1,l2,postfix->data,result);
-    			push(&bucket,'m');
-    			//printf("Case 1\n");
-    			}
-    			else if(postfix->data=='+' && (((l2m==1 && l1m!=1) && isgreater(l1,l2)==1) || (l2m==0 && l1m==1 &&  isgreater(l1,l2)==-1))){
-    			calculate(l1,l2,'-',result);
-    		
-    			//printf("Case 2\n");
-    			}
-    			else if(postfix->data=='+' && (((l2m==1 && l1m!=1) && isgreater(l1,l2)==-1) || (l2m==0 && l1m==1 && isgreater(l1,l2)==1))){
-    			calculate(l1,l2,'-',result);
-    			push(&bucket,'m');
-    			//printf("Case 3\n");
-    			}
-    			else if(postfix->data=='+' && (l2m==1 || l1m==1 ) && isgreater(l1,l2)==0){
-    			insertLeft(result,0);
-    			//printf("Case 4\n");
-    			}
-    			else if(postfix->data=='+' && l2m==0 && l1m==0){
-    			calculate(l1,l2,postfix->data,result);
-    			//printf("Case 5\n");
-    			//push(&bucket,'m');
-    			}
-    			else if(postfix->data=='-' && l2m==1 && l1m==1 && isgreater(l1,l2)==1){
-    			calculate(l1,l2,'-',result);	
-    			push(&bucket,'m');
-    			//printf("Case 6\n");
-    			}
-    			else if(postfix->data=='-' && l2m==1 && l1m==1 && isgreater(l1,l2)==-1){
-    			calculate(l1,l2,'-',result);	
-    			//printf("Case 7\n");
-    			}
-    			else if(postfix->data=='-' && l2m==l1m && isgreater(l1,l2)==0){
-    			    			insertLeft(result,0);
-    			    			//printf("Case 8\n");
-    			}
-    			else if(postfix->data=='-' && l2m==0 && l1m==0 && isgreater(l1,l2)==1){
-    			calculate(l1,l2,'-',result);	
-    			//printf("Case 9\n");
-    			}
-    			else if(postfix->data=='-' && l1m==0 && l2m==0 && isgreater(l1,l2)==-1){
-    			calculate(l1,l2,'-',result);	
-    			push(&bucket,'m');
-    			//printf("Case 10\n");
-    			}
-    			else if(postfix->data=='-' && l2m==1 && l1m==0 ){
-    			calculate(l1,l2,'+',result);
-    			//printf("Case 11\n");	
-    			}
-    			else if(postfix->data=='-' && l2m==0 && l1m==1 ){
-    			calculate(l1,l2,'+',result);	
-    			push(&bucket,'m');
-    			//printf("Case 12\n");
-    			}
-    			else if(postfix->data=='*' && l1m==l2m){
-    			calculate(l1,l2,'*',result);
-    			//printf("Case 13\n");	
-    			}
-    			else if(postfix->data=='*' && (l1m==1 || l2m==1)){
-    			
-    			calculate(l1,l2,'*',result);	
-    			//printf("BP\n");
-    			push(&bucket,'m');
-    			//printf("Case 14\n");	
-    			}
-   
-    			else if(postfix->data=='/' && l1m==l2m){
-    			calculate(l1,l2,'/',result);	
-    			//printf("Case 15\n");
-    			}
-    			else if(postfix->data=='/' && (l1m==1 || l2m==1)){
-    			calculate(l1,l2,'/',result);	
-    			push(&bucket,'m');
-    			//printf("Case 16\n");	
-    			}
-    			
-    			//printf("coming here for result??\n");
-    			//displayLR(result);
+    			calculate(&l1,&l2,postfix->data,&result);
     			//then we push the result back in 
-    			node* p=result->front;
+    			node* p=result.front;
     			while(p){
     				push(&bucket,(char)((int)'0'+p->val));
     				p=p->next;
     			}
-    			//printf("new here\n");
-    			free(l1);
-    			free(l2);
-    			free(result);
-    			//printf("new here\n");
-    			
+    			delete(&l1);
+    			delete(&l2);
+    			delete(&result);
     	}
     	else{
     		push(&bucket,postfix->data);
-    		//printf("peek bucket %c \n",peek(bucket));
     	}
-    	//printf("bucket > ");
-    	//display(bucket);
-    	//printf("postfix data: %c, ",postfix->data);
     	postfix=postfix->next;
     }
-    	//printf("bucket > ");
-	//display(bucket);
-	list* bd=(list*)malloc(sizeof(list));
-	init(bd);
-	while(!isempty(bucket)){
-	if(peek(bucket)=='m'){
-	bd->front->val=bd->front->val *(-1);
-	pop(&bucket);}
-	if(peek(bucket)==' '){
-	pop(&bucket);
-	}
-	else
-		insertLeft(bd,pop(&bucket)-'0');
-	}
-	displayLR(bd);
-	free(bd);
-	
-	
-	/*delete(&l1);
+    
+	display(bucket);
+	delete(&l1);
     delete(&l2);
     delete(&result);
     //deleteStack(&s);
   //  delete(infix);
   //  delete(postfix);
-//*/
-}
-int main(){
-	builder();
+//
+
 	return 0;
 }
 
