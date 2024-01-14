@@ -1,29 +1,9 @@
+#include "binary_calculator_612203043.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <limits.h>
 
-typedef struct node{
-	int val;
-	struct node* next;
-	struct node* prev;
-}node;
-typedef struct list{
-	node* front;
-	node* rear;
-}list;
-//beginning of stack 
-typedef struct sll{
-	char data;
-	struct sll *next;
-}sll;
-
-
-
-typedef struct stack{
-	sll* l;
-	sll *top;
-}stack;
 void init_list(sll **l){
    *l = NULL;
     return;
@@ -130,6 +110,8 @@ void display(stack s){
 }
 
 //stack definitions end here
+
+
 void init(list* ptr){
 	ptr->front=NULL;
 	ptr->rear=NULL;
@@ -699,6 +681,7 @@ void division(list* ptr1, list*ptr2, list* quotient){
 	
 }
 
+
 int precedence(char c){
     if(c == '+')
         return 10;
@@ -987,8 +970,5 @@ void builder(){
   //  delete(postfix);
 //*/
 }
-int main(){
-	builder();
-	return 0;
-}
+
 

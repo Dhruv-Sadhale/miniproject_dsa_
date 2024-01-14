@@ -1,29 +1,9 @@
+#include "binary_calculator_612203043.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <limits.h>
 
-typedef struct node{
-	int val;
-	struct node* next;
-	struct node* prev;
-}node;
-typedef struct list{
-	node* front;
-	node* rear;
-}list;
-//beginning of stack 
-typedef struct sll{
-	char data;
-	struct sll *next;
-}sll;
-
-
-
-typedef struct stack{
-	sll* l;
-	sll *top;
-}stack;
 void init_list(sll **l){
    *l = NULL;
     return;
@@ -130,6 +110,8 @@ void display(stack s){
 }
 
 //stack definitions end here
+
+//doubly linked list definitions begin here
 void init(list* ptr){
 	ptr->front=NULL;
 	ptr->rear=NULL;
@@ -175,7 +157,6 @@ void insertLeft(list* ptr, int val){
 }
 void displayLR(list* ptr){
 	if(ptr->front==NULL){
-		//printf("Empty List\n");
 		return;
 	}
 	node* p=ptr->front;
@@ -188,7 +169,6 @@ void displayLR(list* ptr){
 }
 int isemptylist(list *ptr){
 	if (ptr->front==NULL){
-		//printf("Empty List\n");
 		return 1;
 	return 0;
 }
@@ -242,13 +222,16 @@ void delete(list* ptr){
 	return;
 }
 int isgreater(list* ptr1, list* ptr2){
+	//returns 1 if ptr1 > ptr2
+	//returns 0 if ptr1=ptr2
+	//returns -1 if ptr1<ptr2
  	node* p1=(ptr1)->front;
 	node* p2=(ptr2)->front;
-	//first we check for the bigger number
 	int len1=0;
 	int len2=0;
 	node *q1;
 	node *q2;
+	//removing all leading zeros
 	while(p1 && p1->val==0 ){
 		q1=p1;
 		ptr1->front=ptr1->front->next;
@@ -273,7 +256,7 @@ int isgreater(list* ptr1, list* ptr2){
 	}
 	p1=(ptr1)->front;
 	p2=(ptr2)->front;
-	
+	//counting the number of digits in each number
 	while(p1){
 		len1++;
 		p1=p1->next;
@@ -290,6 +273,7 @@ int isgreater(list* ptr1, list* ptr2){
 		return -1;
 	}
 	else{
+	//final checking of which number is greater
 		p1=(ptr1)->front;
 		p2=(ptr2)->front;
 		while(p1 && p2){
@@ -302,11 +286,25 @@ int isgreater(list* ptr1, list* ptr2){
 			p1=p1->next;
 			p2=p2->next;
 		}
+	p1=NULL;
+	p2=NULL;
+	q1=NULL;
+	q2=NULL;
+	free(p1);
+	free(p2);
+	free(q1);
+	free(q2);
 		return 0;
 	}
+	
 }
+
 void subtraction(list* ptr1, list* ptr2,list *diff){
 	int now,num;
+	//now variable represents the new number from which we divide after considering the borrow from the previous digit
+	//todo variable is if the current number is 0 and thus the next digits must also be changed
+	// num is to temporarily store the values
+	//change is to represent if borrow is required for the next bit of the larger number
 	int change=0, todo=0;
 	node* p1;
 	node* p2;
@@ -322,8 +320,6 @@ void subtraction(list* ptr1, list* ptr2,list *diff){
 	 p2=(ptr1)->rear;
 	p1=(ptr2)->rear;
 	}
-	//list diff;
-	//init(&diff);
 	while(p1 && p2){
 		if(change==1 || todo==1){
 			if(p1->val!=0){
@@ -398,8 +394,9 @@ void subtraction(list* ptr1, list* ptr2,list *diff){
 		
 		p2=p2->prev;
 	}
-	//displayLR(diff);
-	//if(diff->front
+	free(p1);
+	free(p2);
+	
 	node *q1;
 	node* pp=diff->front;
 	while(pp && pp->val==0 ){
@@ -413,15 +410,16 @@ void subtraction(list* ptr1, list* ptr2,list *diff){
 	init(diff);
 		insertLeft(diff,0);
 	}
+	q1=NULL;
+	pp=NULL;
+	free(q1);
+	free(pp);
 }		
 void addition(list* ptr1,list* ptr2,list* sum){
-	//printf("enters addition function\n");
 	int k=0;
 	int num;
 	node* p1=(ptr1)->rear;
 	node* p2=(ptr2)->rear;
-	//list sum;
-	//init(&sum);
 	while(p1 && p2){
 		
 		if(p1->val+p2->val+k >9){
@@ -464,14 +462,14 @@ void addition(list* ptr1,list* ptr2,list* sum){
 	if(k==1){
 		insertLeft(sum,1);
 	}
-	//list* ret=&sum;
-	displayLR(sum);
-	//return ret;
+	p1=NULL;
+	p2=NULL;
+	free(p1);
+	free(p2);
 
 }
 
 void  multiplication(list* ptr1, list* ptr2,list* result){
-//printf("enters multilication func\n");
 	node* p1=(ptr1)->front;
 	node* p2=(ptr2)->front;
 	//first we check for the bigger number
@@ -518,7 +516,6 @@ void  multiplication(list* ptr1, list* ptr2,list* result){
 			p2=(ptr2)->rear;
 		}
 	}
-	//printf("%d %d %d %d\n", len1, len2, p1->val, p2->val); //correct till here
 	//now we perform the multiplication algorithm
 	node* least=p1;
     int i = 0;
@@ -530,7 +527,6 @@ void  multiplication(list* ptr1, list* ptr2,list* result){
     sum[0]=(list*)malloc(sizeof(list));
     init(sum[0]);
     insertLeft(sum[0],0);
-   // displayLR(sum[0]);
     while (p2) {
         p1 = least;
         carry = 0;
@@ -556,60 +552,51 @@ void  multiplication(list* ptr1, list* ptr2,list* result){
             insertRight(level[i], 0);
             z--;
         }
-      //  printf("for level %d: ",i);
-        //displayLR(level[i]);
         addition(sum[i], level[i],sum[i+1]);
-       // free(sum[i]);
-        //free(level[i]);
         i++;
         p2 = p2->prev;
     }
-    	//printf("Result of multiplication operation\n");
-    	  //  displayLR(sum[i]);
 	node* transfer=sum[i]->front;
 	while(transfer){
 		insertRight(result,transfer->val);
 		transfer=transfer->next;
 	}
-	//displayLR(result);
-	//free(*sum);
-	//free(*level);
-	//free(*sum);
+	
+	
+	p1=NULL;
+	free(p1);
+	p2=NULL;
+	free(p2);
+	least=NULL;
+	free(least);
+	transfer=NULL;
+	free(transfer);
+	for(int i=0;i<size;i++){
+		free(level[i]);
+	}
+	for(int i=0;i<size+1;i++){
+		free(sum[i]);
+	}
 
 }
 
 
 void division(list* ptr1, list*ptr2, list* quotient){
-	//printf("bp\n");
 	if(ptr2->front->val==0){
 		printf("Error, cannot divide by zero\n");
 		exit(0);
 	}
 	node* p1=ptr1->front;
-	//int i=1;
-	int z=0;
-	//list* temp=NULL;
 		list* rem=NULL;
 		p1=ptr1->front;
 		list* temp=(list*)malloc(sizeof(list));
 		init(temp);
 		
 	while(p1){
-	
-		//p1=ptr1->front;
-		
-		
-		
 			insertRight(temp,p1->val);
 			p1=p1->next;
-			//printf("temp ");
-			//displayLR(temp);
-			//printf(" to check is greater %d\n", isgreater(ptr2,temp));
-			//displayLR(temp);
 		if(isgreater(ptr2,temp)==1){
 			insertRight(quotient,0);
-			//printf("quotient: ");
-			//displayLR(quotient);
 		}
 		else{
 			int i=0;
@@ -618,12 +605,8 @@ void division(list* ptr1, list*ptr2, list* quotient){
 			init(I);
 			insertLeft(I,i);
 			while(i<=10){
-			mul=(list*)malloc(sizeof(list));
-			init(mul);
-			//insertLeft(mul,0);
-				
-					//deleteLeft(mul);
-					//init(mul);
+					mul=(list*)malloc(sizeof(list));
+					init(mul);
 					I->front->val=i;
 					multiplication(ptr2,I,mul);
 					int yes=isgreater(mul,temp);
@@ -643,9 +626,7 @@ void division(list* ptr1, list*ptr2, list* quotient){
 			free(I);
 			free(mul);
 			insertRight(quotient,i);
-			//printf("quotient: ");
-			//displayLR(quotient);
-			 rem=(list*)malloc(sizeof(list));
+			rem=(list*)malloc(sizeof(list));
 			init(rem);
 			
 			
@@ -655,13 +636,11 @@ void division(list* ptr1, list*ptr2, list* quotient){
 			mul=(list*)malloc(sizeof(list));
 			init(mul);
 			multiplication(ptr2,I,mul);
-			//printf("mul: ");
-			//displayLR(mul);
-			subtraction(temp,mul,rem);//yet to be designed
+			
+			subtraction(temp,mul,rem);
 			free(mul);
 			free(I);
-			//printf("remainder is: ");
-			//displayLR(rem);
+			
 			if(p1==NULL) break;
 			if(p1!=NULL){
 				free(temp);
@@ -678,8 +657,6 @@ void division(list* ptr1, list*ptr2, list* quotient){
 			
 		}
 	}
-	//printf("result of division: ");
-	//displayLR(quotient);
 	
 	node *q1;
 	node* pp=quotient->front;
@@ -694,10 +671,12 @@ void division(list* ptr1, list*ptr2, list* quotient){
 	init(quotient);
 		insertLeft(quotient,0);
 	}
-	/*if(rem!=NULL)
-	displayLR(rem);*/
-	
+	q1=NULL;
+	pp=NULL;
+	free(q1);
+	free(pp);
 }
+
 
 int precedence(char c){
     if(c == '+')
@@ -708,10 +687,6 @@ int precedence(char c){
         return 20;
     else if(c == '/')
         return 20;
-    else if(c == '%')
-        return 20;
-    else if(c == '^')
-        return 30;
     else if(c == '(')
         return 5;
     return 0;
@@ -725,14 +700,11 @@ void calculate(list* ptr1, list* ptr2, char op,list* result){
 			break;
 		case '*': multiplication(ptr1,ptr2,result);
 			break;
-		case '/':division(ptr1,ptr2,result);
-				
-				
+		case '/':division(ptr1,ptr2,result);	
 			break;
 		default: printf("invalid\n");
 			break;
 	}
-	//printf("Final result is:\n");
 	
 }	
 
@@ -743,7 +715,8 @@ void builder(){
     sll* infix;
     init_list(&infix);
     int entry;
-    printf("Enter:\n");
+    printf("--------BINARY CALCULATOR---------\n");
+    printf("Enter your expression:\n");
     while((entry=getchar())!=EOF){
     	append(&infix,entry);
     }
@@ -756,7 +729,6 @@ void builder(){
     init_stack(&bucket);
     char c;
     append(&postfix,' ');
-   // printf("%c",infix->data);
     while(infix){
             c = infix->data;
             if(isdigit(c)){
@@ -787,25 +759,14 @@ void builder(){
                         }
                     }
             }
-                  	//printf("%c, ",postfix->data);
        infix=infix->next;
 
     }
     
-	//display(s);
     while(!isempty(s)){
         append(&postfix , pop(&s));
         append(&postfix , ' ');
     }
-   // printf("hello??\n");
-    //to display postfix
-   /*sll* fornow=postfix;
-    while(fornow){
-    	printf("%c", fornow->data);
-    	fornow=fornow->next;
-    }
-    free(fornow);
-    printf("\n");*/
     //now we do our final calculations
     	list *l1;
 	list *l2;
@@ -820,18 +781,16 @@ void builder(){
     		init(l1);
     		init(l2);
     		init(result);
-    		//printf("is empty? %d\n",isempty(bucket));
-    		//printf("how many times here?\n");
     		while(space!=3){
     			if(peek(bucket)==' '){
-    				//printf("bp1\n");
+    				
     				space++;
     				if(space==3) break;
     				pop(&bucket);
     			}
     			else{
     				if(space==1){
-    				//printf("bp2\n");
+
     					if(peek(bucket)=='m'){
     					l2m=1;
     					pop(&bucket);
@@ -839,24 +798,24 @@ void builder(){
     					 l2m=0;
     					
     					insertLeft(l2,pop(&bucket)-'0');
-    					//displayLR(l2);
+
     					}
     				}
     				else if(space==2){
 					
     					if(peek(bucket)=='m'){
-    					  //printf("peek bucket ' %c ' \n", peek(bucket));
+
     					  pop(&bucket);
-    					 // printf("'%c'\n",peek(bucket));
-    					 // break;
+
+
     					l1m=1;
-    					//printf("pop bucket '%c' ",pop(&bucket));
-    					//printf("peek buckut ' %c ' ",peek(bucket));
+
+
     					} else {l1m=0;
     					insertLeft(l1,pop(&bucket)-'0');
-    					//displayLR(l1);
+
     					}
-    				//displayLR(l1);
+
     				}
     			}
     		}
@@ -937,32 +896,26 @@ void builder(){
     			//printf("Case 16\n");	
     			}
     			
-    			//printf("coming here for result??\n");
-    			//displayLR(result);
     			//then we push the result back in 
     			node* p=result->front;
     			while(p){
     				push(&bucket,(char)((int)'0'+p->val));
     				p=p->next;
     			}
-    			//printf("new here\n");
     			free(l1);
     			free(l2);
     			free(result);
-    			//printf("new here\n");
+
     			
     	}
     	else{
     		push(&bucket,postfix->data);
-    		//printf("peek bucket %c \n",peek(bucket));
+
     	}
-    	//printf("bucket > ");
-    	//display(bucket);
-    	//printf("postfix data: %c, ",postfix->data);
     	postfix=postfix->next;
     }
-    	//printf("bucket > ");
-	//display(bucket);
+    
+    
 	list* bd=(list*)malloc(sizeof(list));
 	init(bd);
 	while(!isempty(bucket)){
@@ -975,20 +928,11 @@ void builder(){
 	else
 		insertLeft(bd,pop(&bucket)-'0');
 	}
+	printf("Answer:\n");
 	displayLR(bd);
 	free(bd);
-	
-	
-	/*delete(&l1);
-    delete(&l2);
-    delete(&result);
-    //deleteStack(&s);
-  //  delete(infix);
-  //  delete(postfix);
-//*/
+	free(infix);
+	free(postfix);
 }
-int main(){
-	builder();
-	return 0;
-}
+
 
